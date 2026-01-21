@@ -6,7 +6,6 @@
 #include "src/MeNewRGBLed.h"
 #include <MeMegaPi.h>
 
-
 /* MOTOR DIAGRAM
 10 __^__ 1
   |     |
@@ -44,12 +43,12 @@ bool toggle = false;
 #define LOG_ENTRY_MAXLEN  16        // Max characters per entry (incl. '\0')
 
 
-float AccErrorX = -0.99;
-float AccErrorY = 0.66;
-float GyroErrorX = -0.68;
-float GyroErrorY = 1.71;
-float GyroErrorZ = -0.98;
-float interval = 20/10; //Interval between moves, Target Time divide by moves
+float AccErrorX = -0.86;
+float AccErrorY = 0.74;
+float GyroErrorX = -0.72;
+float GyroErrorY = 1.75;
+float GyroErrorZ = -0.92;
+float interval = 20/10; //Interval between moves, Target Time divide by moves. CAN'T BE OVER 2!
 
 /*Copy and Paste functions from here if needed
 Enter_Arena();
@@ -60,7 +59,7 @@ Turn_Left();
 End_Recenter();
 */
 void Put_Plan___Here(){ //Make sure to put ; down after moves
-  Plan__2();
+  Plan__3();
 }
 void Plan__1(){
   while(!((collision_65.isCollision())  ||  (collision_66.isCollision()))) {
@@ -74,6 +73,7 @@ void Plan__2(){
 }
 void Plan__3(){
   Enter_Arena();
+  End_Recenter();
 }
 void Plan__4(){
   Enter_Arena();
@@ -237,18 +237,21 @@ void Move_Forward(){ // original delay 4.6
       motor_9.run(32 / 100.0 * 255);
       motor_2.run(-25 / 100.0 * 255);
       motor_10.run(-25 / 100.0 * 255);
+      flashleft();
     }
     if (yaw < -0.25) {
       motor_1.run(25 / 100.0 * 255);
       motor_9.run(25 / 100.0 * 255);
       motor_2.run(-32 / 100.0 * 255);
       motor_10.run(-32 / 100.0 * 255);
+      flashright();
     }
     if (yaw < 0.1 && yaw > -0.1) {
       motor_1.run(25 / 100.0 * 255);
       motor_9.run(25 / 100.0 * 255);
       motor_2.run(-25 / 100.0 * 255);
       motor_10.run(-25 / 100.0 * 255); 
+      flashcenter();
     }
     t++;
 
@@ -310,7 +313,7 @@ void End_Recenter(){ //10 cm backwards to put dowel in center of square
 
   zero_mpu();
   t = 0;
-  while (t < 250) {
+  while (t < 300) {
     mpu_update();
     if (yaw < -0.25) {
       motor_1.run(-32 / 100.0 * 255);
@@ -333,7 +336,7 @@ void End_Recenter(){ //10 cm backwards to put dowel in center of square
     t++;
 
   }
-  log("B");
+  log("BE");
   motor_1.run(0 / 100.0 * 255);
   motor_9.run(0 / 100.0 * 255);
   motor_2.run(0 / 100.0 * 255);
@@ -350,7 +353,7 @@ void Enter_Arena(){ //moves 35 cm - So center of robot is in center of square
 
   zero_mpu();
   t = 0;
-  while (t < 1015) {
+  while (t < 1050) {
     mpu_update();
     if (yaw > 0.5) {
       motor_1.run(32 / 100.0 * 255);
